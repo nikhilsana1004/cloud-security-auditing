@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Security Auditing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .query-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .results-box {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+        }
+        .spinner {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>?? Cloud Security Auditing</h1>
+            <p>Query CloudTrail logs using natural language</p>
+        </div>
+        <div class="content">
+            <input type="text" id="userQuery" class="query-input" placeholder="Enter your query...">
+            <button class="btn" onclick="executeQuery()">Submit</button>
+            <div class="spinner" id="spinner">Processing...</div>
+            <div class="results-box" id="results"></div>
+        </div>
+    </div>
+    <script>
+        async function executeQuery() {
+            const query = document.getElementById('userQuery').value;
+            if (!query) return alert('Please enter a query');
+            
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({userQuery: query})
+                });
+                const data = await response.json();
+                
+                document.getElementById('spinner').style.display = 'none';
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.style.display = 'block';
+                
+                if (data.error) {
+                    resultsDiv.innerHTML = '<strong>Error:</strong> ' + data.error;
+                } else {
+                    resultsDiv.innerHTML = 
+                        '<h3>SQL Query:</h3><pre>' + data.sqlQuery + '</pre>' +
+                        '<h3>Results:</h3><pre>' + data.results + '</pre>' +
+                        '<h3>Description:</h3><p>' + data.description + '</p>';
+                }
+            } catch (error) {
+                document.getElementById('spinner').style.display = 'none';
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

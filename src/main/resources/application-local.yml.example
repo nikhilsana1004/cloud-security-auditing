@@ -1,0 +1,27 @@
+# ================================================================
+# Local Configuration Example
+# ================================================================
+# INSTRUCTIONS:
+# 1. Copy this file to: application-local.yml
+# 2. Replace placeholder values with your actual AWS resources
+# 3. application-local.yml is in .gitignore and will NOT be committed
+# ================================================================
+
+cloudaudit:
+  database-name: your_athena_database_name_here
+  table-name: your_cloudtrail_table_name_here
+  s3-output-location: s3://your-bucket-name/your-results-path/
+  aws-region: us-west-2
+  bedrock-model-id: anthropic.claude-v2:1
+  max-retries: 3
+  wait-time-seconds: 2
+  temperature: 0.7
+  max-tokens: 4000
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.cloudaudit: DEBUG
+    software.amazon.awssdk: INFO

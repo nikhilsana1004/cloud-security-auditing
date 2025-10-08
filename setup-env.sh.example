@@ -1,0 +1,30 @@
+#!/bin/bash
+# 
+# Environment Variable Setup Script
+# 
+# INSTRUCTIONS:
+# 1. Copy this file: cp setup-env.sh.example setup-env.sh
+# 2. Edit setup-env.sh with your actual AWS values
+# 3. Run: source setup-env.sh
+# 4. setup-env.sh is in .gitignore and will NOT be committed
+#
+
+echo "Setting up environment variables for Cloud Security Auditing..."
+
+# AWS Athena Configuration
+export ATHENA_DATABASE_NAME="your_database_name_here"
+export ATHENA_TABLE_NAME="your_table_name_here"
+export S3_OUTPUT_LOCATION="s3://your-bucket-name/results/"
+export AWS_REGION="us-west-2"
+
+# AWS Bedrock Configuration
+export BEDROCK_MODEL_ID="anthropic.claude-v2:1"
+
+# Application Configuration
+export SERVER_PORT="8080"
+export SPRING_PROFILES_ACTIVE="local"
+
+echo "? Environment variables configured!"
+echo ""
+echo "To run the application:"
+echo "  mvn spring-boot:run"

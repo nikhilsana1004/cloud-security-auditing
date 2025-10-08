@@ -1,0 +1,23 @@
+cloudaudit:
+  # Use environment variables - never commit real values!
+  database-name: ${ATHENA_DATABASE_NAME:your_database_name}
+  table-name: ${ATHENA_TABLE_NAME:your_table_name}
+  s3-output-location: ${S3_OUTPUT_LOCATION:s3://your-bucket/results/}
+  aws-region: ${AWS_REGION:us-west-2}
+  bedrock-model-id: ${BEDROCK_MODEL_ID:anthropic.claude-v2:1}
+  max-retries: 3
+  wait-time-seconds: 2
+  temperature: 0.7
+  max-tokens: 4000
+
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: Cloud Security Auditing
+
+logging:
+  level:
+    com.cloudaudit: INFO
+    software.amazon.awssdk: WARN
