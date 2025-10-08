@@ -1,209 +1,102 @@
-# Cloud Security Auditing Application
+🔐 Cloud Security Auditing
 
-A Spring Boot application that enables natural language querying of AWS CloudTrail logs using AWS Bedrock (Claude) and Amazon Athena.
+Query AWS CloudTrail logs using natural language, powered by AWS Bedrock (Claude AI).
+This tool transforms human questions into SQL queries, audits your AWS environment in real time, and ensures sensitive data is masked automatically.
 
- - Features
+🚀 Features
 
-- -? Natural language to SQL query conversion
-- - Query AWS CloudTrail logs using plain English
-- - AI-powered insights using AWS Bedrock (Claude)
-- - Real-time query execution via Amazon Athena
-- - Built-in data masking for sensitive information
-- - CSV export for large datasets
-- - Modern, responsive web interface
+🗣️ Natural Language to SQL Conversion – Ask questions like “Show all failed login attempts today”.
 
- - Security Notice
+🔍 Real-Time CloudTrail Log Analysis – Query events dynamically from Athena.
 
-This application handles sensitive security data. Never commit AWS credentials or configuration with real values to version control.
+🤖 AI-Powered Insights – Uses AWS Bedrock (Claude) for semantic query generation and analysis.
 
-All configuration uses:
-- ? Environment variables (recommended for production)
-- ? Local configuration files (in `.gitignore`)
-- ? Data masking for sensitive fields
-- ? AWS IAM roles (when running on AWS)
+🔒 Built-In Data Masking – Automatically hides IPs, Account IDs, and ARNs in responses.
 
- - Prerequisites
+📥 CSV Export – Download large query results for offline analysis.
 
-- Java 17 or higher
-- Maven 3.6+
-- AWS Account with access to:
-  - Amazon Athena
-  - AWS Bedrock (Claude models)
-  - Amazon S3 (for Athena results)
-  - AWS CloudTrail (for log data)
-- AWS CLI configured with credentials
+⚙️ Prerequisites
 
- - Quick Start
+Before running the application, ensure you have:
 
-# 1. Clone the Repository
+☕ Java 17+
 
-```bash
-git clone https://github.com/yourusername/cloud-security-auditing.git
+🧩 Maven 3.6+
+
+🪣 AWS Account with permissions for:
+
+Athena
+
+Bedrock
+
+CloudTrail
+
+🧰 AWS CLI configured with credentials (aws configure)
+
+🧭 Quick Start
+1️⃣ Clone the Repository
+git clone https://github.com/nikhilsana1004/cloud-security-auditing.git
 cd cloud-security-auditing
-```
 
-# 2. Configure AWS Credentials
-
-Option A: Using AWS CLI (Recommended)
-```bash
-aws configure
-```
-
-Option B: Using Environment Variables
-```bash
-export AWS_ACCESS_KEY_ID=your_access_key_id
-export AWS_SECRET_ACCESS_KEY=your_secret_access_key
-export AWS_REGION=us-west-2
-```
-
-# 3. Configure Application
-
-Copy the example configuration:
-```bash
+2️⃣ Configure
 cp src/main/resources/application-local.yml.example src/main/resources/application-local.yml
-```
 
-Edit `application-local.yml` with your AWS resources:
-```yaml
+
+Edit application-local.yml with your AWS resource details.
+
+3️⃣ Run the Application
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+
+4️⃣ Access the UI
+
+Open your browser and navigate to:
+
+http://localhost:8080
+
+🧩 Configuration Example
+
+Set these values in application-local.yml:
+
 cloudaudit:
   database-name: your_athena_database
   table-name: your_cloudtrail_table
   s3-output-location: s3://your-bucket/results/
   aws-region: us-west-2
-```
 
-Note: `application-local.yml` is in `.gitignore` and will not be committed.
+💬 Usage Examples
 
-# 4. Build the Project
+You can query your CloudTrail logs using natural language prompts like:
 
-```bash
-mvn clean install
-```
+“Show me all failed login attempts in the last 24 hours”
 
-# 5. Run the Application
+“List all EC2 instance creations this week”
 
-Development (using application-local.yml):
-```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=local
-```
+“Find events from IP address 192.168.1.1”
 
-Production (using environment variables):
-```bash
-export ATHENA_DATABASE_NAME=your_database
-export ATHENA_TABLE_NAME=your_table
-export S3_OUTPUT_LOCATION=s3://your-bucket/results/
-mvn spring-boot:run
-```
+🛡️ Security
 
-# 6. Access the Application
+✅ No credentials stored in code
 
-Open your browser to: http://localhost:8080
+✅ Automatic data masking
 
- - Usage Examples
+✅ Environment variable–based configuration
 
-Enter natural language queries such as:
+✅ SQL injection prevention
 
-- "Show me all failed login attempts in the last 24 hours"
-- "List all EC2 instance creations this week"
-- "Find all events from IP address 192.168.1.1"
-- "What are the top 10 most common API calls?"
-- "Show me all errors from the us-east-1 region"
+🧰 Tech Stack
+Layer	Technology
+Backend	Spring Boot 3.2.0
+AI/NLP	AWS Bedrock (Claude)
+Data Query	AWS Athena
+UI	Thymeleaf
+Testing	JUnit 5
+Logging	SLF4J + Logback
+🧠 How It Works
 
- - Configuration
+User enters a natural language query in the web interface.
 
-# Environment Variables
+Application sends the prompt to AWS Bedrock (Claude) for SQL generation.
 
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `ATHENA_DATABASE_NAME` | Athena database name | Yes | - |
-| `ATHENA_TABLE_NAME` | CloudTrail events table | Yes | - |
-| `S3_OUTPUT_LOCATION` | S3 path for query results | Yes | - |
-| `AWS_REGION` | AWS region | No | us-west-2 |
-| `BEDROCK_MODEL_ID` | Bedrock model ID | No | anthropic.claude-v2:1 |
-| `SERVER_PORT` | Application port | No | 8080 |
+The generated SQL query executes on AWS Athena against CloudTrail logs.
 
-# Application Profiles
-
-- `default` - Uses environment variables
-- `local` - Uses application-local.yml (development)
-
- - Security Features
-
-- ? Data Masking: Automatically masks sensitive information
-  - IP addresses: `192.168.1.1` ? `*.*.*.*`
-  - AWS Account IDs: `123456789012` ? ``
-  - ARNs: Full ARNs masked to prevent information disclosure
-  - Access Keys: Detected and masked
-- ? SQL Query Masking: Database and table names hidden in UI
-- ? No Hardcoded Credentials: All sensitive data externalized
-- ? Audit Logging: All queries logged for security monitoring
-
-
- - Troubleshooting
-
-# AWS Credentials Not Found
-```
-Error: Unable to load AWS credentials
-Solution: Run 'aws configure' or set environment variables
-```
-
-# Athena Query Failed
-```
-Error: Access denied to S3 location
-Solution: Verify S3 bucket permissions and IAM policy
-```
-
-# Bedrock Model Not Available
-```
-Error: Model access denied
-Solution: Request model access in AWS Bedrock console
-```
-
- - AWS Architecture
-
-This application uses:
-- Amazon Athena: Serverless SQL query engine
-- Amazon S3: Stores CloudTrail logs
-- AWS Glue Data Catalog: Table metadata
-- AWS Bedrock: Claude LLM for natural language processing
-- AWS CloudTrail: Source of security event data
-
- - Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-Important: Never commit sensitive data! Always check with:
-```bash
-git status
-git diff
-```
-
-
- - Disclaimer
-
-This application queries AWS CloudTrail logs which contain sensitive security information. Ensure:
-- Proper access controls are in place
-- Compliance with your organization's security policies
-- Regular security audits
-- Data retention policies are followed
-
- - Support
-
-For issues or questions:
-- Open an issue on GitHub
-- Check existing issues for solutions
-- Review AWS documentation for service-specific problems
-
- - Acknowledgments
-
-- AWS Bedrock for Claude AI integration
-- Spring Boot for the application framework
-- AWS SDK for Java for AWS service integration
-
----
-
-Built with - for secure cloud infrastructure monitoring
+The results are sanitized, masked, and displayed or exported as CSV.
